@@ -2,7 +2,7 @@
 <html lang="zxx">
 <head><title>About Us</title></head>
 <?php include 'head.php';?>
-<body onload="initialize()" class="dark-scheme">
+< onload="initialize()" class="dark-scheme">
     <div id="wrapper">
         
         <!-- page preloader begin -->
@@ -71,7 +71,7 @@
                 </div>
             </section>
 
-            <section id="section-call-to-action" class="bg-color-2 pt60 pb60 text-light">
+            <section id="section-call-to-action" class="bg-color-2 pt60 pb60 text-dark">
                 <div class="container">
                     <div class="row align-items-center">
                         <div class="col-lg-8">
@@ -93,79 +93,15 @@
                     </div>
                 </div>
             </section>
-			
         </div>
         <!-- content close -->
-
         <a href="#" id="back-to-top"></a>
-        
-        <!-- footer begin -->
-        <footer class="text-light">
-            <div class="container">
-                <div class="row g-custom-x">
-                    <div class="col-lg-3">
-                        <div class="widget">
-                            <h5>About Pure Rent</h5>
-                            <p>Where your next ride meets convenience, style, and reliability.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="col-lg-3">
-                        <div class="widget">
-                            <h5>Contact Info</h5>
-                            <address class="s1">
-                                <span><i class="id-color fa fa-map-marker fa-lg"></i>08 W 36th St, New York, NY 10001</span>
-                                <span><i class="id-color fa fa-phone fa-lg"></i>+1 333 9296</span>
-                                <span><i class="id-color fa fa-envelope-o fa-lg"></i><a href="mailto:contact@example.com">contact@example.com</a></span>
-                                <span><i class="id-color fa fa-file-pdf-o fa-lg"></i><a href="#">Download Brochure</a></span>
-                            </address>
-                        </div>
-                    </div>
-
-                    <div class="col-lg-3">
-                        <div class="widget">
-                            <h5>Social Network</h5>
-                            <div class="social-icons">
-                                <a href="#"><i class="fa fa-facebook fa-lg"></i></a>
-                                <a href="#"><i class="fa fa-twitter fa-lg"></i></a>
-                                <a href="#"><i class="fa fa-linkedin fa-lg"></i></a>
-                                <a href="#"><i class="fa fa-pinterest fa-lg"></i></a>
-                                <a href="#"><i class="fa fa-rss fa-lg"></i></a>
-                            </div>
-                        </div>    
-                    </div>
-                </div>
-            </div>
-            <div class="subfooter">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="de-flex">
-                                <div class="de-flex-col">
-                                    <a href="index.php">
-                                        &copy; 2025 - Pure Rental Group
-                                    </a>
-                                </div>
-                                <ul class="menu-simple">
-                                    <li><a href="#">Terms &amp; Conditions</a></li>
-                                    <li><a href="#">Privacy Policy</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-        <!-- footer close -->
-        
-    </div>
-
-
+</div>
     <!-- Javascript Files
     ================================================== -->
     <script src="js/plugins.js"></script>
     <script src="js/designesia.js"></script>
 
 </body>
-
+<?php include 'footer.php';?>
 </html>

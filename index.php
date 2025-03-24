@@ -46,8 +46,8 @@ $result = $conn->query($sql);
                                 <div class="container">
                                     <div class="row gx-5 align-items-center">
                                         <div class="col-lg-6 offset-lg-3 text-center mb-sm-30">
-                                            <h1 class="s3 mb-3 wow fadeInUp" style="font-size: 60px;">Premium Cars <br>Gig Cars <br> Uber, Doordash, Lyft, Instacart</h1>
-                                            <p class="lead wow fadeInUp" data-wow-delay=".3s">Discover the world in unparalleled comfort and style.</p>
+                                            <h1 class="s3 mb-3 wow fadeInUp">Premium Cars</h1>
+                                            <p class="lead wow fadeInUp" data-wow-delay=".3s">Top-Tier Vehicles for First-Class Adventures.</p>
                                             <div class="spacer-10"></div>
                                             <a class="btn-line mb10 wow fadeInUp" data-wow-delay=".6s" href="cars-list.php">Book Now</a>
                                         </div>
@@ -71,8 +71,8 @@ $result = $conn->query($sql);
                                 <div class="container">
                                     <div class="row gx-5 align-items-center">
                                         <div class="col-lg-6 offset-lg-3 text-center mb-sm-30">
-                                            <h1 class="s3 mb-3 wow fadeInUp">Excellent Service</h1>
-                                            <p class="lead wow fadeInUp" data-wow-delay=".3s">Our experienced team is ready to accompany with your journey.</p>
+                                            <h1 class="s3 mb-3 wow fadeInUp">Gig Cars</h1>
+                                            <p class="lead wow fadeInUp" data-wow-delay=".3s">Perfect for Every Task. Built for Every Hustle.</p>
                                             <div class="spacer-10"></div>
                                             <a class="btn-line mb10 wow fadeInUp" data-wow-delay=".6s" href="booking.html">Book Now</a>
                                         </div>
@@ -96,10 +96,10 @@ $result = $conn->query($sql);
                                 <div class="container">
                                     <div class="row gx-5 align-items-center">
                                         <div class="col-lg-6 offset-lg-3 text-center mb-sm-30">
-                                            <h1 class="s3 mb-3 wow fadeInUp">Wide Car Fleet</h1>
-                                            <p class="lead wow fadeInUp" data-wow-delay=".3s">From SUVs to exotic cars, find the perfect vehicle for every journey.</p>
+                                            <h1 class="s3 mb-3 wow fadeInUp">Uber, DoorDash, Lyft, Instacart</h1>
+                                            <p class="lead wow fadeInUp" data-wow-delay=".3s">Get on the Road & Start Earning Instantly.</p>
                                             <div class="spacer-10"></div>
-                                            <a class="btn-line mb10 wow fadeInUp" data-wow-delay=".6s" href="booking.html">Book Now</a>
+                                            <a class="btn-line mb10 wow fadeInUp" data-wow-delay=".6s" href="booking.php">Book Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -127,8 +127,8 @@ $result = $conn->query($sql);
                 <div class="container">
                     <div class="row align-items-center">
                         <div class="col-lg-6 offset-lg-3 text-center">
-                            <h2>Our Vehicle Fleet</h2>
-                            <p>Driving your dreams to reality with an exquisite fleet of versatile vehicles for unforgettable journeys.</p>
+                            <h2>Our Fleet, Your Journey</h2>
+                            <p>Bringing your driving dreams to life with a refined selection of vehicles for every adventure.</p>
                             <div class="spacer-20"></div>
                         </div>
                         <div id="items-carousel" class="owl-carousel wow fadeIn">
@@ -282,81 +282,13 @@ $result = $conn->query($sql);
                 </div>
             </section>            
 
-            <section id="section-news">
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-lg-6 offset-lg-3 text-center">
-                            <h2>Latest News</h2>
-                            <p>Breaking news, fresh perspectives, and in-depth coverage - stay ahead with our latest news, insights, and analysis.</p>
-                            <div class="spacer-20"></div>
-                        </div>
-                        
-                        <div class="col-lg-4 mb10">
-                            <div class="bloglist s2 item">
-                                <div class="post-content">
-                                    <div class="post-image">
-                                        <div class="date-box">
-                                            <div class="m">10</div>
-                                            <div class="d">MAR</div>
-                                        </div>
-                                        <img alt="" src="images/news/pic-blog-1.jpg" class="lazy">
-                                    </div>
-                                    <div class="post-text">                         
-                                        <h4><a href="news-single.html">Enjoy Best Travel Experience<span></span></a></h4>
-                                        <p>Traveling is an enriching experience that allows us to explore new destinations, immerse ourselves in different cultures, and create lifelong memories.</p>
-                                        <a class="btn-line" href="#">Read More</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                                
-                        <div class="col-lg-4 mb10">
-                            <div class="bloglist s2 item">
-                                <div class="post-content">
-                                    <div class="post-image">
-                                        <div class="date-box">
-                                            <div class="m">12</div>
-                                            <div class="d">MAR</div>
-                                        </div>
-                                        <img alt="" src="images/news/pic-blog-2.jpg" class="lazy">
-                                    </div>
-                                    <div class="post-text">                           
-                                        <h4><a href="news-single.html">The Future of Car Rent<span></span></a></h4>
-                                        <p>As technology continues to advance at a rapid pace, the car rental industry is poised for a transformative shift. The future of car rental promises..</p>
-                                        <a class="btn-line" href="#">Read More</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                                
-                        <div class="col-lg-4 mb10">
-                            <div class="bloglist s2 item">
-                                <div class="post-content">
-                                    <div class="post-image">
-                                        <div class="date-box">
-                                            <div class="m">14</div>
-                                            <div class="d">MAR</div>
-                                        </div>
-                                        <img alt="" src="images/news/pic-blog-3.jpg" class="lazy">
-                                    </div>
-                                    <div class="post-text">                            
-                                        <h4><a href="news-single.html">Holiday Tips For Backpacker<span></span></a></h4>
-                                        <p>For adventure seekers and budget-conscious travelers, backpacking offers a thrilling and immersive way to explore the world. Whether you're embarking..</p>
-                                        <a class="btn-line" href="#">Read More</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             <section class="text-light jarallax" aria-label="section">
                 <img src="images/background/3.jpg" alt="" class="jarallax-img">
                 <div class="container">
                     <div class="row">
                     <div class="col-lg-3">
-                        <h1>Let's Your Adventure Begin</h1>
+                        <h1>Let Your Adventure Begin</h1>
                         <div class="spacer-20"></div>
                     </div>
                     <div class="col-md-3">
@@ -416,7 +348,7 @@ $result = $conn->query($sql);
                             <div class="accordion secondary">
                                 <div class="accordion-section">
                                     <div class="accordion-section-title" data-tab="#accordion-b-4">
-                                        What is a rental car security deposit?
+                                 What is a rental car security deposit?
                                     </div>
                                     <div class="accordion-section-content" id="accordion-b-4">
                                         <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.</p>
