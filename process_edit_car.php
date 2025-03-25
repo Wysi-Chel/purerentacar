@@ -5,23 +5,28 @@ include 'php/dbconfig.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve and sanitize form data
-    $car_id   = intval($_POST['car_id']);
-    $make     = $conn->real_escape_string($_POST['make']);
-    $model    = $conn->real_escape_string($_POST['model']);
-    $year     = intval($_POST['year']);
-    $category = $conn->real_escape_string($_POST['category']);
-    $status   = $conn->real_escape_string($_POST['status']);
+    $car_id      = intval($_POST['car_id']);
+    $make        = $conn->real_escape_string($_POST['make']);
+    $model       = $conn->real_escape_string($_POST['model']);
+    $year        = intval($_POST['year']);
+    $category    = $conn->real_escape_string($_POST['category']);
+    $status      = $conn->real_escape_string($_POST['status']);
+    
+    $seaters     = intval($_POST['seaters']);
+    $num_doors   = intval($_POST['num_doors']);
+    $runs_on_gas = $conn->real_escape_string($_POST['runs_on_gas']);
+    $mpg         = floatval($_POST['mpg']);
     
     // Initialize variable for new display image path if uploaded
     $display_image_path = "";
     
     // Process display image upload if a new file is provided
     if (isset($_FILES['display_image']) && $_FILES['display_image']['error'] == 0) {
-        $targetDir = "../images/cars/"; // Adjust path if necessary
+        $targetDir = "images/cars/"; // Adjust path if necessary
         if (!is_dir($targetDir)) {
             mkdir($targetDir, 0777, true);
         }
-        $filename = uniqid() . "_" . basename($_FILES['display_image']['name']);
+        $filename   = uniqid() . "_" . basename($_FILES['display_image']['name']);
         $targetFile = $targetDir . $filename;
         if (move_uploaded_file($_FILES['display_image']['tmp_name'], $targetFile)) {
             // Store the relative path (adjust if your stored path should be different)
@@ -39,6 +44,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         year = '$year', 
                         category = '$category', 
                         status = '$status', 
+                        seaters = $seaters,
+                        num_doors = $num_doors,
+                        runs_on_gas = '$runs_on_gas',
+                        mpg = $mpg,
                         display_image = '$display_image_path'
                       WHERE id = $car_id";
     } else {
@@ -47,7 +56,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         model = '$model', 
                         year = '$year', 
                         category = '$category', 
-                        status = '$status'
+                        status = '$status',
+                        seaters = $seaters,
+                        num_doors = $num_doors,
+                        runs_on_gas = '$runs_on_gas',
+                        mpg = $mpg
                       WHERE id = $car_id";
     }
     
@@ -70,10 +83,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
     }
+
+    // Process additional images upload if provided
+if (isset($_FILES['additional_images']) && $_FILES['additional_images']['error'][0] === 0) {
+    // Loop through each additional image file
+    for ($i = 0; $i < count($_FILES['additional_images']['name']); $i++) {
+        if ($_FILES['additional_images']['error'][$i] === 0) {
+            $targetDir = "images/cars/"; // Ensure this folder exists
+            if (!is_dir($targetDir)) {
+                mkdir($targetDir, 0777, true);
+            }
+            $filename = uniqid() . "_" . basename($_FILES['additional_images']['name'][$i]);
+            $targetFile = $targetDir . $filename;
+            if (move_uploaded_file($_FILES['additional_images']['tmp_name'][$i], $targetFile)) {
+                // Insert this additional image into the car_images table
+                $sqlImage = "INSERT INTO car_images (car_id, image_path) VALUES ($car_id, '$targetFile')";
+                $conn->query($sqlImage);
+            } else {
+                // Optionally handle an individual file upload error (e.g., log it)
+                // For now, you can ignore errors for additional images.
+            }
+        }
+    }
+}
     
     $conn->close();
     
-    // Output an HTML page with a Bootstrap modal that shows a success message and redirects
+    // Output an HTML page that notifies success and instructs the parent to close the modal and reload
     ?>
     <!DOCTYPE html>
     <html lang="en">
@@ -81,33 +117,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Success</title>
-        <!-- Use Bootstrap 5 CSS from CDN -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
-        <!-- Modal -->
-        <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="successModalLabel">Success</h5>
-              </div>
-              <div class="modal-body">
+        <div class="container mt-3">
+            <div class="alert alert-success">
                 Car updated successfully!
-              </div>
             </div>
-          </div>
         </div>
-        
-        <!-- Bootstrap 5 Bundle with Popper from CDN -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            // Create and show the modal
-            var successModal = new bootstrap.Modal(document.getElementById('successModal'));
-            successModal.show();
-            // Redirect after 2 seconds
+            var modalEl = window.parent.document.getElementById('editCarModal');
+            var modalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (!modalInstance) {
+                modalInstance = new bootstrap.Modal(modalEl);
+            }
+            modalInstance.hide();
             setTimeout(function(){
-                window.location.href = 'admin-dashboard.php';
+                window.parent.location.reload();
             }, 2000);
         </script>
     </body>

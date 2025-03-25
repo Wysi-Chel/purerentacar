@@ -2,7 +2,7 @@
 // Include the database configuration file
 include 'php/dbconfig.php';
 
-// Fetch car data from the 'cars' table
+// Fetch car data from the 'cars' table, including rental_rate for day 1
 $sql = "SELECT c.*, 
         (SELECT rate FROM car_rental_rates WHERE car_id = c.id AND rental_day = 1) AS rental_rate 
         FROM cars c";
@@ -11,7 +11,9 @@ $result = $conn->query($sql);
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>    <title>Homepage</title></head>
+    <head>    
+        <title>Homepage</title>
+    </head>
     <?php include 'head.php';?>
 <body onload="initialize()" class="dark-scheme">
     <div id="wrapper">
@@ -49,7 +51,7 @@ $result = $conn->query($sql);
                                             <h1 class="s3 mb-3 wow fadeInUp">Premium Cars</h1>
                                             <p class="lead wow fadeInUp" data-wow-delay=".3s">Top-Tier Vehicles for First-Class Adventures.</p>
                                             <div class="spacer-10"></div>
-                                            <a class="btn-line mb10 wow fadeInUp" data-wow-delay=".6s" href="cars-list.php">Book Now</a>
+                                            <a class="btn-line mb10 wow fadeInUp" data-wow-delay=".6s" href="cars.php">Book Now</a>
                                         </div>
                                     </div>
                                 </div>
@@ -151,11 +153,21 @@ $result = $conn->query($sql);
                                                         <i class="fa fa-heart"></i><span><?php echo isset($row['likes']) ? $row['likes'] : '0'; ?></span>
                                                     </div>
                                                     <div class="d-atr-group">
-                                                        <!-- These attributes are static placeholders; adjust as needed -->
-                                                        <span class="d-atr"><img src="images/icons/1-green.svg" alt="">5</span>
-                                                        <span class="d-atr"><img src="images/icons/2-green.svg" alt="">2</span>
-                                                        <span class="d-atr"><img src="images/icons/3-green.svg" alt="">4</span>
-                                                        <span class="d-atr"><img src="images/icons/4-green.svg" alt="">SUV</span>
+                                                        <!-- Dynamically display car details: seaters, doors, fuel type, and MPG -->
+                                                        <span class="d-atr">
+                                                            <img src="images/icons/1-green.svg" alt="Seaters"> 
+                                                            <?php echo $row['seaters']; ?>
+                                                        </span>
+                                                        <span class="d-atr">
+                                                            <img src="images/icons/3-green.svg" alt="Fuel Type"> 
+                                                            <?php echo ucfirst($row['num_doors']); ?>
+                                                        </span>
+                                                        <?php if (strtolower($row['runs_on_gas']) !== 'battery'): ?>
+                                                        <span class="d-atr">
+                                                            <img src="images/icons/4-green.svg" alt="MPG"> 
+                                                            <?php echo sprintf('%g', $row['mpg']); ?> MPG
+                                                        </span>
+                                                        <?php endif; ?>
                                                     </div>
                                                     <div class="d-price">
                                                         Daily rate from <span>$<?php echo (!empty($row['rental_rate']) ? number_format($row['rental_rate'], 2) : "N/A"); ?></span>
@@ -382,10 +394,10 @@ $result = $conn->query($sql);
     
 
     <!-- Javascript Files
-    ================================================== -->
+    ================================================== -->  
     <script src="js/plugins.js"></script>
     <script src="js/designesia.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgiM7ogCAA2Y5pgSk2KXZfxF5S_1jsptA&amp;libraries=places&amp;callback=initPlaces" async="" defer=""></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgiM7ogCAA2Y5pgSk2KXZfxF5S_1jsptA&amp;libraries=places&amp;callback=initPlaces" async defer></script>
 
 </body>
 </html>

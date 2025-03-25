@@ -38,16 +38,7 @@ for ($d = 1; $d <= 7; $d++) {
 <html lang="en">
 <head>
     <title>Edit Car Details</title>
-    <link rel="icon" href="images/rel-icon.png" type="image/gif" sizes="16x16">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- CSS Files -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/mdb.min.css" rel="stylesheet">
-    <link href="css/plugins.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <link href="css/coloring.css" rel="stylesheet">
-    <link id="colors" href="css/colors/scheme-07.css" rel="stylesheet">
+    <?php include 'head.php'; ?>
     <style>
       .current-img {
           max-width: 200px;
@@ -55,9 +46,8 @@ for ($d = 1; $d <= 7; $d++) {
       }
     </style>
 </head>
-<body class="dark-scheme">
-    <div class="container mt-5">
-        <h2>Edit Car Details</h2>
+<body class="light-scheme">
+    <div class="container">
         <form action="process_edit_car.php" method="post" enctype="multipart/form-data">
             <!-- Hidden input for car id -->
             <input type="hidden" name="car_id" value="<?php echo $car_id; ?>">
@@ -85,6 +75,28 @@ for ($d = 1; $d <= 7; $d++) {
                     <option value="Unavailable" <?php echo (strtolower($car['status']) !== 'available' && $car['status'] != '1') ? "selected" : ""; ?>>Unavailable</option>
                 </select>
             </div>
+            <div class="mb-3">
+                <label for="seaters" class="form-label">Seater</label>
+                <input type="text" class="form-control" id="seaters" name="seaters" value="<?php echo htmlspecialchars($car['seaters']); ?>" required>
+            </div>
+            <div class="mb-3">
+                <label for="num_doors" class="form-label">Doors</label>
+                <input type="text" class="form-control" id="num_doors" name="num_doors" value="<?php echo htmlspecialchars($car['num_doors']); ?>" required>
+            </div>
+            <div class="mb-3">
+                <label for="runs_on_gas" class="form-label">Powered</label>
+                <select name="runs_on_gas" id="runs_on_gas" class="form-select" required>
+                    <option value="battery" <?php echo (strtolower($car['runs_on_gas']) === 'battery' ? 'selected' : ''); ?>>Battery</option>
+                    <option value="gas (regular)" <?php echo (strtolower($car['runs_on_gas']) === 'gas (regular)' ? 'selected' : ''); ?>>Gas (Regular)</option>
+                    <option value="gas (premium)" <?php echo (strtolower($car['runs_on_gas']) === 'gas (premium)' ? 'selected' : ''); ?>>Gas (Premium)</option>
+                    <option value="hybrid (regular)" <?php echo (strtolower($car['runs_on_gas']) === 'hybrid (regular)' ? 'selected' : ''); ?>>Hybrid (Regular)</option>
+                    <option value="hybrid (premium)" <?php echo (strtolower($car['runs_on_gas']) === 'hybrid (premium)' ? 'selected' : ''); ?>>Hybrid (Premium)</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="mpg" class="form-label">MPG</label>
+                <input type="text" class="form-control" id="mpg" name="mpg" value="<?php echo htmlspecialchars($car['mpg']); ?>">
+            </div>
 
             <div class="mb-3">
                 <label class="form-label">Official (Display) Image</label><br>
@@ -95,6 +107,11 @@ for ($d = 1; $d <= 7; $d++) {
                 <?php endif; ?>
                 <input type="file" class="form-control" name="display_image">
                 <small class="form-text text-muted">Upload a new image to replace the current official image.</small>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Additional Images</label>
+                <input type="file" class="form-control" name="additional_images[]" multiple>
+                <small class="form-text text-muted">You can select multiple additional images.</small>
             </div>
 
             <hr>
@@ -108,12 +125,26 @@ for ($d = 1; $d <= 7; $d++) {
             <?php endfor; ?>
 
             <button type="submit" class="btn btn-primary">Save Changes</button>
-            <a href="admin_dashboard.php" class="btn btn-secondary">Cancel</a>
+            <!-- Cancel button calls cancelEdit() -->
+            <button type="button" class="btn btn-secondary" onclick="cancelEdit();">Cancel</button>
         </form>
     </div>
 
-    <!-- Javascript Files -->
+    <!-- JavaScript Files -->
     <script src="js/plugins.js"></script>
     <script src="js/designesia.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
+      // This function closes the parent modal when Cancel is clicked.
+      function cancelEdit() {
+          // Use the parent's bootstrap object to get the modal instance
+          var modalEl = window.parent.document.getElementById('editCarModal');
+          var modalInstance = window.parent.bootstrap.Modal.getInstance(modalEl);
+          if (!modalInstance) {
+              modalInstance = new window.parent.bootstrap.Modal(modalEl);
+          }
+          modalInstance.hide();
+      }
+    </script>
 </body>
 </html>

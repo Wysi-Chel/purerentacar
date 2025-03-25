@@ -13,12 +13,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $model       = trim($_POST['model']);
     $year        = intval($_POST['year']);
     $category    = trim($_POST['category']);
+    
+    // New car details
+    $seaters     = intval($_POST['seaters']);
+    $num_doors   = intval($_POST['num_doors']);
+    $runs_on_gas = trim($_POST['runs_on_gas']); // expecting "yes" or "no"
+    $mpg         = floatval($_POST['mpg']);
+    
     // Set status as Available by default.
     $status      = "Available";
 
     // Process the uploaded display image
     if (isset($_FILES['display_image']) && $_FILES['display_image']['error'] === 0) {
-        $uploadDir = 'images/cars/'; // Ensure this directory exists and is writable
+        $uploadDir = '../images/cars/'; // Ensure this directory exists and is writable
         // Generate a unique file name to avoid collisions
         $filename = uniqid() . '_' . basename($_FILES['display_image']['name']);
         $uploadFile = $uploadDir . $filename;
@@ -31,9 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // If no errors, insert the new car record into the database
     if (empty($error)) {
-        // Insert the main car record
-        $stmt = $conn->prepare("INSERT INTO cars (make, model, year, category, status, display_image) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssisss", $make, $model, $year, $category, $status, $uploadFile);
+        // Insert the main car record including new fields
+        $stmt = $conn->prepare("INSERT INTO cars (make, model, year, category, status, display_image, seaters, num_doors, runs_on_gas, mpg) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssisssiisd", $make, $model, $year, $category, $status, $uploadFile, $seaters, $num_doors, $runs_on_gas, $mpg);
         if ($stmt->execute()) {
             // After inserting the car, get its ID
             $car_id = $stmt->insert_id;
@@ -220,21 +227,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
                 <div class="form-group">
                     <label for="category">Category:</label>
-                    <input type="text" name="category" id="category" class="form-control" required>
+                    <select name="category" id="category" class="form-control" required>
+                        <option value="">Select a Category</option>
+                        <option value="sedan">Sport</option>
+                        <option value="suv">SUV</option>
+                        <option value="truck">Sedan</option>
+                        <option value="coupe">Van</option>
+                    </select>
                 </div>
-                
+                <!-- New Car Details -->
+                <div class="form-group">
+                    <label for="seaters">Seaters:</label>
+                    <input type="number" name="seaters" id="seaters" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="num_doors">Doors:</label>
+                    <input type="number" name="num_doors" id="num_doors" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="runs_on_gas">Powered by:</label>
+                    <select name="runs_on_gas" id="runs_on_gas" class="form-control" required>
+                        <option value="">Select an Option</option>
+                        <option value="battery">Battery</option>
+                        <option value="gas_regular">Gas (Regular)</option>
+                        <option value="gas_premium">Gas (Premium)</option>
+                        <option value="hybrid_regular">Hybrid (Regular)</option>
+                        <option value="hybrid_premium">Hybrid (Premium)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="mpg">Miles Per Gallon (MPG):</label>
+                    <input type="number" name="mpg" id="mpg" class="form-control" >
+                </div>
                 <!-- Official (Display) Image -->
                 <div class="form-group">
-                    <label for="display_image">Official (Display) Image:</label>
+                    <label for="display_image">Display Image:</label>
                     <input type="file" name="display_image" id="display_image" class="form-control-file" required>
                 </div>
-                
                 <!-- Additional Images -->
                 <div class="form-group">
                     <label for="additional_images">Additional Images:</label>
                     <input type="file" name="additional_images[]" id="additional_images" class="form-control-file" multiple>
                 </div>
-                
                 <!-- Rental Rates for Days 1 to 7 -->
                 <div class="form-group">
                     <label for="rental_rate_1">Rental Rate (1-Day):</label>
@@ -242,27 +276,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
                 <div class="form-group">
                     <label for="rental_rate_2">Rental Rate (2-Day):</label>
-                    <input type="number" step="0.01" name="rental_rate_2" id="rental_rate_2" class="form-control" required>
+                    <input type="number" step="0.01" name="rental_rate_2" id="rental_rate_2" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="rental_rate_3">Rental Rate (3-Day):</label>
-                    <input type="number" step="0.01" name="rental_rate_3" id="rental_rate_3" class="form-control" required>
+                    <input type="number" step="0.01" name="rental_rate_3" id="rental_rate_3" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="rental_rate_4">Rental Rate (4-Day):</label>
-                    <input type="number" step="0.01" name="rental_rate_4" id="rental_rate_4" class="form-control" required>
+                    <input type="number" step="0.01" name="rental_rate_4" id="rental_rate_4" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="rental_rate_5">Rental Rate (5-Day):</label>
-                    <input type="number" step="0.01" name="rental_rate_5" id="rental_rate_5" class="form-control" required>
+                    <input type="number" step="0.01" name="rental_rate_5" id="rental_rate_5" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="rental_rate_6">Rental Rate (6-Day):</label>
-                    <input type="number" step="0.01" name="rental_rate_6" id="rental_rate_6" class="form-control" required>
+                    <input type="number" step="0.01" name="rental_rate_6" id="rental_rate_6" class="form-control">
                 </div>
                 <div class="form-group">
                     <label for="rental_rate_7">Rental Rate (7-Day):</label>
-                    <input type="number" step="0.01" name="rental_rate_7" id="rental_rate_7" class="form-control" required>
+                    <input type="number" step="0.01" name="rental_rate_7" id="rental_rate_7" class="form-control">
                 </div>
                 
                 <div class="text-center mt-4">
