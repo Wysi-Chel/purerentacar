@@ -4,7 +4,7 @@
     <title>About Us</title>
     <?php include 'head.php'; ?>
 </head>
-<body onload="initialize()" class="dark-scheme">
+<body onload="initialize()" class="light-scheme">
     <div id="wrapper">
         
         <!-- page preloader begin -->

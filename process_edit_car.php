@@ -17,6 +17,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $runs_on_gas = $conn->real_escape_string($_POST['runs_on_gas']);
     $mpg         = floatval($_POST['mpg']);
     
+    $daily_rate  = floatval($_POST['daily_rate']);
+    $weekly_rate = floatval($_POST['weekly_rate']);
+    
     // Initialize variable for new display image path if uploaded
     $display_image_path = "";
     
@@ -36,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
     
-    // Update the cars table
+    // Update the cars table with the new fields
     if (!empty($display_image_path)) {
         $updateSQL = "UPDATE cars SET 
                         make = '$make', 
@@ -48,6 +51,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         num_doors = $num_doors,
                         runs_on_gas = '$runs_on_gas',
                         mpg = $mpg,
+                        daily_rate = $daily_rate,
+                        weekly_rate = $weekly_rate,
                         display_image = '$display_image_path'
                       WHERE id = $car_id";
     } else {
@@ -60,56 +65,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         seaters = $seaters,
                         num_doors = $num_doors,
                         runs_on_gas = '$runs_on_gas',
-                        mpg = $mpg
+                        mpg = $mpg,
+                        daily_rate = $daily_rate,
+                        weekly_rate = $weekly_rate
                       WHERE id = $car_id";
     }
     
     if (!$conn->query($updateSQL)) {
         die("Error updating car: " . $conn->error);
     }
-    
-    // Update rental rates:
-    // Delete existing rates for this car
-    $deleteSQL = "DELETE FROM car_rental_rates WHERE car_id = $car_id";
-    $conn->query($deleteSQL);
-    
-    // Insert new rates for days 1 to 7
-    for ($d = 1; $d <= 7; $d++) {
-        if (isset($_POST["rental_rate_$d"]) && $_POST["rental_rate_$d"] !== "") {
-            $rate = floatval($_POST["rental_rate_$d"]);
-            $insertSQL = "INSERT INTO car_rental_rates (car_id, rental_day, rate) VALUES ($car_id, $d, $rate)";
-            if (!$conn->query($insertSQL)) {
-                die("Error inserting rental rate for day $d: " . $conn->error);
-            }
-        }
-    }
 
     // Process additional images upload if provided
-if (isset($_FILES['additional_images']) && $_FILES['additional_images']['error'][0] === 0) {
-    // Loop through each additional image file
+    if (isset($_FILES['additional_images']) && $_FILES['additional_images']['error'][0] === 0) {
+    // Loop through each uploaded additional image
     for ($i = 0; $i < count($_FILES['additional_images']['name']); $i++) {
-        if ($_FILES['additional_images']['error'][$i] === 0) {
-            $targetDir = "images/cars/"; // Ensure this folder exists
-            if (!is_dir($targetDir)) {
-                mkdir($targetDir, 0777, true);
-            }
-            $filename = uniqid() . "_" . basename($_FILES['additional_images']['name'][$i]);
-            $targetFile = $targetDir . $filename;
-            if (move_uploaded_file($_FILES['additional_images']['tmp_name'][$i], $targetFile)) {
-                // Insert this additional image into the car_images table
-                $sqlImage = "INSERT INTO car_images (car_id, image_path) VALUES ($car_id, '$targetFile')";
-                $conn->query($sqlImage);
-            } else {
-                // Optionally handle an individual file upload error (e.g., log it)
-                // For now, you can ignore errors for additional images.
-            }
+        $uploadDir = "images/cars/"; // Ensure this directory exists and is writable
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+        $filename = uniqid() . '_' . basename($_FILES['additional_images']['name'][$i]);
+        $targetFile = $uploadDir . $filename;
+        
+        if (move_uploaded_file($_FILES['additional_images']['tmp_name'][$i], $targetFile)) {
+            // Insert the image record into the car_images table
+            $stmt_img = $conn->prepare("INSERT INTO car_images (car_id, image_path) VALUES (?, ?)");
+            $stmt_img->bind_param("is", $car_id, $targetFile);
+            $stmt_img->execute();
+            $stmt_img->close();
         }
     }
 }
     
     $conn->close();
     
-    // Output an HTML page that notifies success and instructs the parent to close the modal and reload
+    // Output a small HTML page that instructs the parent to close the modal and reload
     ?>
     <!DOCTYPE html>
     <html lang="en">
@@ -127,6 +116,7 @@ if (isset($_FILES['additional_images']) && $_FILES['additional_images']['error']
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
+            // Close the parent modal and reload the parent window after 2 seconds.
             var modalEl = window.parent.document.getElementById('editCarModal');
             var modalInstance = bootstrap.Modal.getInstance(modalEl);
             if (!modalInstance) {

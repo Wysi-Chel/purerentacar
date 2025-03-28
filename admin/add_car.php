@@ -17,54 +17,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // New car details
     $seaters     = intval($_POST['seaters']);
     $num_doors   = intval($_POST['num_doors']);
-    $runs_on_gas = trim($_POST['runs_on_gas']); // expecting "yes" or "no"
+    $runs_on_gas = trim($_POST['runs_on_gas']); // expecting one of the predefined options
     $mpg         = floatval($_POST['mpg']);
+    
+    // Rental rates (Daily and Weekly)
+    $daily_rate  = floatval($_POST['daily_rate']);
+    $weekly_rate = floatval($_POST['weekly_rate']);
     
     // Set status as Available by default.
     $status      = "Available";
 
     // Process the uploaded display image
-    if (isset($_FILES['display_image']) && $_FILES['display_image']['error'] === 0) {
-        $uploadDir = '../images/cars/'; // Ensure this directory exists and is writable
-        // Generate a unique file name to avoid collisions
-        $filename = uniqid() . '_' . basename($_FILES['display_image']['name']);
-        $uploadFile = $uploadDir . $filename;
-        if (!move_uploaded_file($_FILES['display_image']['tmp_name'], $uploadFile)) {
-            $error = "Error uploading the display image.";
+    if (isset($_FILES['display_image']) && $_FILES['display_image']['error'] == 0) {
+        $targetDir = "images/cars/";
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0777, true);
         }
-    } else {
-        $error = "No display image uploaded or an error occurred during the upload.";
+        $filename   = uniqid() . "_" . basename($_FILES['display_image']['name']);
+        $targetFile = $targetDir . $filename;
+        if (move_uploaded_file($_FILES['display_image']['tmp_name'], $targetFile)) {
+            $display_image_path = "images/cars/" . $filename;
+        } else {
+            die("Error uploading new display image.");
+        }
     }
-
-    // If no errors, insert the new car record into the database
     if (empty($error)) {
-        // Insert the main car record including new fields
-        $stmt = $conn->prepare("INSERT INTO cars (make, model, year, category, status, display_image, seaters, num_doors, runs_on_gas, mpg) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssisssiisd", $make, $model, $year, $category, $status, $uploadFile, $seaters, $num_doors, $runs_on_gas, $mpg);
+        // Insert the main car record including new fields (daily_rate, weekly_rate)
+        $stmt = $conn->prepare("INSERT INTO cars (make, model, year, category, status, display_image, seaters, num_doors, runs_on_gas, mpg, daily_rate, weekly_rate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssisssiisddd", $make, $model, $year, $category, $status, $uploadFile, $seaters, $num_doors, $runs_on_gas, $mpg, $daily_rate, $weekly_rate);
+        
         if ($stmt->execute()) {
-            // After inserting the car, get its ID
+            // Get the inserted car's ID
             $car_id = $stmt->insert_id;
             $stmt->close();
-
-            // Now insert the rental rates for days 1 to 7
-            $rateFields = [
-                'rental_rate_1',
-                'rental_rate_2',
-                'rental_rate_3',
-                'rental_rate_4',
-                'rental_rate_5',
-                'rental_rate_6',
-                'rental_rate_7'
-            ];
-            $insertRates = $conn->prepare("INSERT INTO car_rental_rates (car_id, rental_day, rate) VALUES (?, ?, ?)");
-            foreach ($rateFields as $index => $field) {
-                $day = $index + 1;
-                $rate = floatval($_POST[$field]);
-                $insertRates->bind_param("iid", $car_id, $day, $rate);
-                $insertRates->execute();
+    
+            // Process additional images only after the main insert (when $car_id is available)
+            if (isset($_FILES['additional_images']) && $_FILES['additional_images']['error'][0] === 0) {
+                for ($i = 0; $i < count($_FILES['additional_images']['name']); $i++) {
+                    $uploadDir = "images/cars/";
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
+                    $filename = uniqid() . '_' . basename($_FILES['additional_images']['name'][$i]);
+                    $targetFile = $uploadDir . $filename;
+                    
+                    if (move_uploaded_file($_FILES['additional_images']['tmp_name'][$i], $targetFile)) {
+                        // Insert the image record into the car_images table
+                        $stmt_img = $conn->prepare("INSERT INTO car_images (car_id, image_path) VALUES (?, ?)");
+                        $stmt_img->bind_param("is", $car_id, $targetFile);
+                        $stmt_img->execute();
+                        $stmt_img->close();
+                    }
+                }
             }
-            $insertRates->close();
-
             $success = "New car added successfully!";
         } else {
             $error = "Error adding car: " . $stmt->error;
@@ -91,13 +96,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <!-- Color scheme -->
     <link id="colors" href="../css/colors/scheme-07.css" rel="stylesheet" type="text/css">
     <style>
-        /* Dark-scheme settings to match index.php */
+        /* Dark-scheme settings */
         body.dark-scheme {
             background-color: #1e1e2d;
             color: #c7c7c7;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        /* Header styling (consistent with index.php) */
+        /* Header styling */
         header.transparent {
             background: rgba(0, 0, 0, 0.7);
             padding: 15px 0;
@@ -152,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-color: #3498db;
             box-shadow: none;
         }
-        /* Button styling matching btn-main */
+        /* Button styling */
         .add-car-container .btn-main {
             background-color: #3498db;
             color: #fff;
@@ -233,6 +238,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <option value="suv">SUV</option>
                         <option value="truck">Sedan</option>
                         <option value="coupe">Van</option>
+                        <option value="coupe">Pickup</option>
                     </select>
                 </div>
                 <!-- New Car Details -->
@@ -257,46 +263,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
                 <div class="form-group">
                     <label for="mpg">Miles Per Gallon (MPG):</label>
-                    <input type="number" name="mpg" id="mpg" class="form-control" >
+                    <input type="number" name="mpg" id="mpg" class="form-control">
                 </div>
-                <!-- Official (Display) Image -->
+                
+                <!-- Rental Rates for Daily and Weekly -->
                 <div class="form-group">
-                    <label for="display_image">Display Image:</label>
-                    <input type="file" name="display_image" id="display_image" class="form-control-file" required>
-                </div>
-                <!-- Additional Images -->
-                <div class="form-group">
-                    <label for="additional_images">Additional Images:</label>
-                    <input type="file" name="additional_images[]" id="additional_images" class="form-control-file" multiple>
-                </div>
-                <!-- Rental Rates for Days 1 to 7 -->
-                <div class="form-group">
-                    <label for="rental_rate_1">Rental Rate (1-Day):</label>
-                    <input type="number" step="0.01" name="rental_rate_1" id="rental_rate_1" class="form-control" required>
+                    <label for="daily_rate">Daily Rate:</label>
+                    <input type="number" step="0.01" name="daily_rate" id="daily_rate" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="rental_rate_2">Rental Rate (2-Day):</label>
-                    <input type="number" step="0.01" name="rental_rate_2" id="rental_rate_2" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="rental_rate_3">Rental Rate (3-Day):</label>
-                    <input type="number" step="0.01" name="rental_rate_3" id="rental_rate_3" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="rental_rate_4">Rental Rate (4-Day):</label>
-                    <input type="number" step="0.01" name="rental_rate_4" id="rental_rate_4" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="rental_rate_5">Rental Rate (5-Day):</label>
-                    <input type="number" step="0.01" name="rental_rate_5" id="rental_rate_5" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="rental_rate_6">Rental Rate (6-Day):</label>
-                    <input type="number" step="0.01" name="rental_rate_6" id="rental_rate_6" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="rental_rate_7">Rental Rate (7-Day):</label>
-                    <input type="number" step="0.01" name="rental_rate_7" id="rental_rate_7" class="form-control">
+                    <label for="weekly_rate">Weekly Rate:</label>
+                    <input type="number" step="0.01" name="weekly_rate" id="weekly_rate" class="form-control">
                 </div>
                 
                 <div class="text-center mt-4">

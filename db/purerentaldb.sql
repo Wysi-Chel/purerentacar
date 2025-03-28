@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 24, 2025 at 07:15 PM
+-- Generation Time: Mar 27, 2025 at 10:02 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -91,18 +91,23 @@ CREATE TABLE `cars` (
   `year` int(11) DEFAULT NULL,
   `category` varchar(100) DEFAULT NULL,
   `status` varchar(50) DEFAULT 'Available',
-  `display_image` varchar(255) DEFAULT NULL
+  `display_image` varchar(255) DEFAULT NULL,
+  `seaters` int(11) NOT NULL DEFAULT 0,
+  `num_doors` int(11) NOT NULL DEFAULT 0,
+  `runs_on_gas` varchar(50) NOT NULL DEFAULT '',
+  `mpg` decimal(5,2) DEFAULT NULL,
+  `daily_rate` decimal(10,2) DEFAULT NULL,
+  `weekly_rate` decimal(10,2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `cars`
 --
 
-INSERT INTO `cars` (`id`, `make`, `model`, `year`, `category`, `status`, `display_image`) VALUES
-(4, 'bmw', 'm6', 2005, 'available', 'Available', 'images/cars/67db1aad584e4_bmw-m5.jpg'),
-(5, 'bmw', 'm6', 2010, 'available', 'Available', 'images/cars/67db1b6fa15a3_bmw-m5.jpg'),
-(6, 'ford', 'raptor', 2020, 'Sport', 'Available', 'images/cars/67db3cd016a57_ford-raptor.jpg'),
-(7, 'jeep', 'renegade', 2020, 'jeep', 'Available', 'images/cars/67db3cfd1ba7e_jeep-renegade.jpg');
+INSERT INTO `cars` (`id`, `make`, `model`, `year`, `category`, `status`, `display_image`, `seaters`, `num_doors`, `runs_on_gas`, `mpg`, `daily_rate`, `weekly_rate`) VALUES
+(1, 'BMW', 'i8', 2017, 'Sport', 'Available', 'images/cars/67e45474527a8_67e4545ca5589_image.png', 2, 2, 'battery', 28.00, 400.00, 0.00),
+(5, 'Lotus', 'Emira', 2024, 'Sport', 'Available', 'images/cars/67e56f0da46a9_lotus_emira.png', 2, 2, 'battery', 20.00, 400.00, 0.00),
+(6, 'Tesla', 'Cybertruck', 2024, 'Pickup', 'Available', 'images/cars/67e56f818cd5b_tesla.png', 5, 4, 'battery', 0.00, 400.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -121,29 +126,14 @@ CREATE TABLE `car_images` (
 --
 
 INSERT INTO `car_images` (`id`, `car_id`, `image_path`) VALUES
-(32, 4, 'images/cars/67db1aad5944f_hyundai-staria.jpg'),
-(33, 4, 'images/cars/67db1aad59cf1_jeep-renegade.jpg'),
-(34, 4, 'images/cars/67db1aad5a91f_lexus.jpg'),
-(35, 4, 'images/cars/67db1aad5b7fa_range-rover.jpg'),
-(36, 4, 'images/cars/67db1aad5c34b_toyota-rav.jpg'),
-(37, 4, 'images/cars/67db1aad5ca2a_vw-polo.jpg'),
-(38, 5, 'images/cars/67db1b6fa291c_chevrolet-camaro.jpg'),
-(39, 5, 'images/cars/67db1b6fa3277_ferrari-enzo.jpg'),
-(40, 5, 'images/cars/67db1b6fa3e6a_ford-raptor.jpg'),
-(41, 5, 'images/cars/67db1b6fa45be_hyundai-staria.jpg'),
-(42, 5, 'images/cars/67db1b6fa529c_jeep-renegade.jpg'),
-(43, 5, 'images/cars/67db1b6fa5cd1_toyota-rav.jpg'),
-(44, 5, 'images/cars/67db1b6fa6833_vw-polo.jpg'),
-(45, 6, 'images/cars/67db3cd01c15f_range-rover.jpg'),
-(46, 6, 'images/cars/67db3cd01ce72_toyota-rav.jpg'),
-(47, 6, 'images/cars/67db3cd01dca4_vw-polo.jpg'),
-(48, 7, 'images/cars/67db3cfd1cbdf_bmw-m5.jpg'),
-(49, 7, 'images/cars/67db3cfd1da31_chevrolet-camaro.jpg'),
-(50, 7, 'images/cars/67db3cfd1e61d_ferrari-enzo.jpg'),
-(51, 7, 'images/cars/67db3cfd1ee21_ford-raptor.jpg'),
-(52, 7, 'images/cars/67db3cfd1f8e7_range-rover.jpg'),
-(53, 7, 'images/cars/67db3cfd1ffeb_toyota-rav.jpg'),
-(54, 7, 'images/cars/67db3cfd20efc_vw-polo.jpg');
+(55, 1, 'images/cars/67e5575a3f42b_67e323da4a2b0_2.png'),
+(56, 1, 'images/cars/67e5575a3fe9a_67e3225607499_1.png'),
+(75, 5, 'images/cars/67e56f0da5359_1.png'),
+(76, 5, 'images/cars/67e56f0da5d78_2.png'),
+(77, 5, 'images/cars/67e56f0da64f6_3.png'),
+(78, 6, 'images/cars/67e56f818d6d0_1.png'),
+(79, 6, 'images/cars/67e56f818ddab_2.png'),
+(80, 6, 'images/cars/67e56f818e644_3.png');
 
 -- --------------------------------------------------------
 
@@ -154,43 +144,36 @@ INSERT INTO `car_images` (`id`, `car_id`, `image_path`) VALUES
 CREATE TABLE `car_rental_rates` (
   `id` int(11) NOT NULL,
   `car_id` int(11) NOT NULL,
-  `rental_day` int(11) NOT NULL,
-  `rate` decimal(10,2) NOT NULL
+  `daily_rate` decimal(10,2) NOT NULL,
+  `weekly_rate` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `car_rental_rates`
 --
 
-INSERT INTO `car_rental_rates` (`id`, `car_id`, `rental_day`, `rate`) VALUES
-(51, 4, 1, 2.00),
-(52, 4, 2, 3.00),
-(53, 4, 3, 4.00),
-(54, 4, 4, 5.00),
-(55, 4, 5, 6.00),
-(56, 4, 6, 7.00),
-(57, 4, 7, 8.00),
-(58, 5, 1, 5.00),
-(59, 5, 2, 6.00),
-(60, 5, 3, 7.00),
-(61, 5, 4, 8.00),
-(62, 5, 5, 9.00),
-(63, 5, 6, 0.00),
-(64, 5, 7, 8.00),
-(65, 6, 1, 800.00),
-(66, 6, 2, 1600.00),
-(67, 6, 3, 4234729.00),
-(68, 6, 4, 934279.00),
-(69, 6, 5, 42938.00),
-(70, 6, 6, 9234.00),
-(71, 6, 7, 78924.00),
-(72, 7, 1, 234.00),
-(73, 7, 2, 423234.00),
-(74, 7, 3, 234.00),
-(75, 7, 4, 2.00),
-(76, 7, 5, 42342.00),
-(77, 7, 6, 24234.00),
-(78, 7, 7, 243423.00);
+INSERT INTO `car_rental_rates` (`id`, `car_id`, `daily_rate`, `weekly_rate`) VALUES
+(58, 5, 0.00, 0.00),
+(59, 5, 0.00, 0.00),
+(60, 5, 0.00, 0.00),
+(61, 5, 0.00, 0.00),
+(62, 5, 0.00, 0.00),
+(63, 5, 0.00, 0.00),
+(64, 5, 0.00, 0.00),
+(65, 6, 0.00, 0.00),
+(66, 6, 0.00, 0.00),
+(67, 6, 0.00, 0.00),
+(68, 6, 0.00, 0.00),
+(69, 6, 0.00, 0.00),
+(70, 6, 0.00, 0.00),
+(71, 6, 0.00, 0.00),
+(72, 7, 0.00, 0.00),
+(73, 7, 0.00, 0.00),
+(74, 7, 0.00, 0.00),
+(75, 7, 0.00, 0.00),
+(76, 7, 0.00, 0.00),
+(77, 7, 0.00, 0.00),
+(78, 7, 0.00, 0.00);
 
 -- --------------------------------------------------------
 
@@ -301,13 +284,13 @@ ALTER TABLE `bookings`
 -- AUTO_INCREMENT for table `cars`
 --
 ALTER TABLE `cars`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `car_images`
 --
 ALTER TABLE `car_images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 
 --
 -- AUTO_INCREMENT for table `car_rental_rates`

@@ -1,6 +1,4 @@
 <?php
-// cars.php
-
 // Include the database configuration file
 include 'php/dbconfig.php';
 
@@ -19,21 +17,25 @@ if (isset($_GET['year']) && !empty($_GET['year'])) {
     $whereClauses[] = "c.year = $year";
 }
 
-// Filter by Category (using your cars.category values)
+// Filter by Category
 if (isset($_GET['category']) && !empty($_GET['category'])) {
-    $category = $conn->real_escape_string($_GET['category']);
-    $whereClauses[] = "c.category = '$category'";
+  $category = $conn->real_escape_string($_GET['category']);
+  if (strtolower($category) === 'available') {
+      // Filter by status instead of category
+      $whereClauses[] = "c.status = 'Available'";
+  } else {
+      $whereClauses[] = "c.category = '$category'";
+  }
 }
 
-// Filter by Rental Rate (price)
-// Note: This filter works on the one-day rental rate joined from car_rental_rates
+// Filter by Rental Rate (price) using daily_rate from the cars table
 if (isset($_GET['min_price']) && is_numeric($_GET['min_price'])) {
     $min_price = (float) $_GET['min_price'];
-    $whereClauses[] = "cr.rate >= $min_price";
+    $whereClauses[] = "c.daily_rate >= $min_price";
 }
 if (isset($_GET['max_price']) && is_numeric($_GET['max_price'])) {
     $max_price = (float) $_GET['max_price'];
-    $whereClauses[] = "cr.rate <= $max_price";
+    $whereClauses[] = "c.daily_rate <= $max_price";
 }
 
 $whereSQL = "";
@@ -41,15 +43,9 @@ if (count($whereClauses) > 0) {
     $whereSQL = " WHERE " . implode(" AND ", $whereClauses);
 }
 
-// Modified query: join car_rental_rates for rental_day = 1 so we can both display and filter by the daily rate
-$sql = "SELECT c.*, cr.rate AS rental_rate 
-        FROM cars c 
-        LEFT JOIN car_rental_rates cr ON c.id = cr.car_id AND cr.rental_day = 1
-        $whereSQL";
-
+$sql = "SELECT c.* FROM cars c" . $whereSQL;
 $result = $conn->query($sql);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -69,10 +65,9 @@ $result = $conn->query($sql);
       font-size: 14px;
       background-color: #fff;
     }
-
     /* Style for the Apply Filters button */
     #filterForm input[type="submit"] {
-      background-color: #3498db; /* Example primary color */
+      background-color: #3498db;
       color: #fff;
       border: none;
       padding: 10px 20px;
@@ -82,13 +77,12 @@ $result = $conn->query($sql);
       transition: background-color 0.3s ease;
       width: 100%;
     }
-
     #filterForm input[type="submit"]:hover {
       background-color: #2980b9;
     }
   </style>
 </head>
-<body onload="initialize()" class="dark-scheme">
+<body onload="initialize()" class="light-scheme">
   <div id="wrapper">
     <div id="de-preloader"></div>
     <?php include 'header.php'; ?>
@@ -125,6 +119,8 @@ $result = $conn->query($sql);
                     <select name="make">
                       <option value="">All</option>
                       <option value="bmw" <?php if(isset($_GET['make']) && $_GET['make'] === 'bmw') echo 'selected'; ?>>BMW</option>
+                      <option value="tesla" <?php if(isset($_GET['make']) && $_GET['make'] === 'tesla') echo 'selected'; ?>>Tesla</option>
+                      <option value="lotus" <?php if(isset($_GET['make']) && $_GET['make'] === 'lotus') echo 'selected'; ?>>Lotus</option>
                       <option value="ford" <?php if(isset($_GET['make']) && $_GET['make'] === 'ford') echo 'selected'; ?>>Ford</option>
                       <option value="jeep" <?php if(isset($_GET['make']) && $_GET['make'] === 'jeep') echo 'selected'; ?>>Jeep</option>
                     </select>
@@ -147,7 +143,8 @@ $result = $conn->query($sql);
                       <option value="">All</option>
                       <option value="available" <?php if(isset($_GET['category']) && $_GET['category'] === 'available') echo 'selected'; ?>>Available</option>
                       <option value="Sport" <?php if(isset($_GET['category']) && $_GET['category'] === 'Sport') echo 'selected'; ?>>Sport</option>
-                      <option value="jeep" <?php if(isset($_GET['category']) && $_GET['category'] === 'jeep') echo 'selected'; ?>>Jeep</option>
+                      <option value="Pickup" <?php if(isset($_GET['category']) && $_GET['category'] === 'pickup') echo 'selected'; ?>>Pickup</option>
+                      <option value="SUV" <?php if(isset($_GET['category']) && $_GET['category'] === 'SUV') echo 'selected'; ?>>SUV</option>
                     </select>
                   </div>
                 </div>
@@ -166,7 +163,7 @@ $result = $conn->query($sql);
                     </div>
                   </div>
                 </div>
-
+                <a href="cars.php" class="btn" style="display:inline-block; margin-top:10px; margin-bottom:10px; background-color:#ccc; color:#333; padding:10px 20px; border-radius:4px; text-decoration:none;">Reset Filters</a>
                 <input type="submit" value="Apply Filters">
               </form>
             </div>
@@ -190,11 +187,11 @@ $result = $conn->query($sql);
                         <div class="d-info">
                           <div class="d-text">
                             <h4><?php echo $row['make'] . " " . $row['model']; ?></h4>
-                            <p >Year: <?php echo $row['year']; ?> | Category: <?php echo $row['category']; ?></p>
+                            <p>Year: <?php echo $row['year']; ?> | Category: <?php echo $row['category']; ?></p>
                           </div>
                         </div>
                         <div class="d-price">
-                          Daily rate from <span>$<?php echo (!empty($row['rental_rate']) ? number_format($row['rental_rate'], 2) : "N/A"); ?></span>
+                          Daily rate from <span>$<?php echo (!empty($row['daily_rate']) ? number_format($row['daily_rate'], 2) : "N/A"); ?></span>
                           <a class="btn-main" href="car-single.php?id=<?php echo $row['id']; ?>">Rent Now</a>
                         </div>
                         <div class="clearfix"></div>
