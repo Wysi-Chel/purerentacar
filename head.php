@@ -16,4 +16,9 @@
 
     <!-- color scheme -->
     <link id="colors" href="css/colors/scheme-07.css" rel="stylesheet" type="text/css">
+
+    <!-- FullCalendar JS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.0/main.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.0/main.min.js"></script>
+
 </head>

@@ -70,7 +70,7 @@
                         <div class="col-lg-4">
                             <div class="de-box mb30">
                                 <h4>US Office</h4>
-                                <address class="s1">
+                                <address class="s1">        
                                     <span><i class="id-color fa fa-map-marker fa-lg"></i>9521 Lumley Rd, Morrisville, NC 27560, United States</span>
                                     <span><i class="id-color fa fa-phone fa-lg"></i>+984-849-4867</span>
                                     <span><i class="id-color fa fa-envelope-o fa-lg"></i><a href="mailto:chello@purerentacar.com">hello@purerentacar.com</a></span>

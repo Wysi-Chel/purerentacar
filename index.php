@@ -76,7 +76,7 @@ $result = $conn->query($sql);
                                                 <h1 class="s3 mb-3 wow fadeInUp">Gig Cars</h1>
                                                 <p class="lead wow fadeInUp" data-wow-delay=".3s"style="color:#fff;">Perfect for Every Task. Built for Every Hustle.</p>
                                                 <div class="spacer-10"></div>
-                                                <a class="btn-line mb10 wow fadeInUp" data-wow-delay=".6s" href="booking.html">Book Now</a>
+                                                <a class="btn-line mb10 wow fadeInUp" data-wow-delay=".6s" href="cars.php">Book Now</a>
                                             </div>
                                         </div>
                                     </div>
@@ -101,7 +101,7 @@ $result = $conn->query($sql);
                                                 <h1 class="s3 mb-3 wow fadeInUp">Uber, DoorDash, Lyft, Instacart</h1>
                                                 <p class="lead wow fadeInUp" data-wow-delay=".3s" style="color:#fff;">Get on the Road & Start Earning Instantly.</p>
                                                 <div class="spacer-10"></div>
-                                                <a class="btn-line mb10 wow fadeInUp" data-wow-delay=".6s" href="booking.php">Book Now</a>
+                                                <a class="btn-line mb10 wow fadeInUp" data-wow-delay=".6s" href="cars.php">Book Now</a>
                                             </div>
                                         </div>
                                     </div>

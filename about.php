@@ -40,33 +40,8 @@
                             At Pure Rental, we believe renting a car should be as smooth and hassle-free as booking a vacation stay. That’s why we’ve partnered with Turo, the world’s leading peer-to-peer car-sharing platform, to bring you a carefully curated selection of well-maintained vehicles, perfect for any occasion — whether it’s a business trip, weekend getaway, or daily commute.
                         </div>
                     </div>
-                    <div class="spacer-double"></div>
-                    <div class="row text-center">
-                        <div class="col-md-3 col-sm-6 mb-sm-30">
-                            <div class="de_count wow fadeInUp" data-bgcolor="#f5f5f5">
-                                <h3 class="timer" data-to="0" data-speed="3000">0</h3>
-                                Completed Orders
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 mb-sm-30">
-                            <div class="de_count wow fadeInUp" data-bgcolor="#f5f5f5">
-                                <h3 class="timer" data-to="0" data-speed="3000">0</h3>
-                                Happy Customers
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 mb-sm-30">
-                            <div class="de_count wow fadeInUp" data-bgcolor="#f5f5f5">
-                                <h3 class="timer" data-to="0" data-speed="3000">0</h3>
-                                Vehicles Fleet
-                            </div>
-                        </div>
-                        <div class="col-md-3 col-sm-6 mb-sm-30">
-                            <div class="de_count wow fadeInUp" data-bgcolor="#f5f5f5">
-                                <h3 class="timer" data-to="0" data-speed="3000">0</h3>
-                                Years Experience
-                            </div>
-                        </div>
-                    </div>
+                    <div class="spacer-single"></div>
+                    
                 </div>
             </section>
 
